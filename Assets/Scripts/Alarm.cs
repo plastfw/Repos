@@ -8,7 +8,7 @@ public class Alarm : MonoBehaviour
     [SerializeField] private float _duration;
 
     private float _runningTime;
-    private int _triggerCount = 1;
+    private  bool _inside = true;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -16,16 +16,15 @@ public class Alarm : MonoBehaviour
 
         if (collision.TryGetComponent<Player>(out Player player))
         {
-            StopAllCoroutines();
-            StartCoroutine(ChangeVolume(_triggerCount));
+            StopCoroutine(ChangeVolume(_inside));
+            StartCoroutine(ChangeVolume(_inside));
         }
     }
 
 
-    private IEnumerator ChangeVolume(int count)
+    private IEnumerator ChangeVolume(bool inside)
     {
         float _targetVolume = 1f;
-        var waitForSecond = new WaitForSeconds(0.01f);
 
         _runningTime += Time.deltaTime;
         float normilizeRinningTime = _runningTime / _duration;
@@ -33,9 +32,9 @@ public class Alarm : MonoBehaviour
 
         _runningTime = 0;
 
-        if (count == 1)
+        if (inside)
         {
-            _triggerCount++;
+            _inside = false;
 
             while (_alarmSound.volume < 1) 
             {
@@ -43,9 +42,9 @@ public class Alarm : MonoBehaviour
                 yield return null;
             }
         }
-        if (count == 2)
+        if (!inside)
         {
-            _triggerCount--;
+            _inside = true;
 
             while (_alarmSound.volume > 0)
             {
