@@ -16,13 +16,13 @@ public class Alarm : MonoBehaviour
 
         if (collision.TryGetComponent<Player>(out Player player))
         {
-            StopCoroutine(ChangeVolume(_inside));
-            StartCoroutine(ChangeVolume(_inside));
+            StopCoroutine(ChangeVolume());
+            StartCoroutine(ChangeVolume());
         }
     }
 
 
-    private IEnumerator ChangeVolume(bool inside)
+    private IEnumerator ChangeVolume()
     {
         float _targetVolume = 1f;
 
@@ -32,21 +32,21 @@ public class Alarm : MonoBehaviour
 
         _runningTime = 0;
 
-        if (inside)
+        if (_inside)
         {
             _inside = false;
 
-            while (_alarmSound.volume < 1) 
+            while (!_inside) 
             {
                 _alarmSound.volume += _targetVolume;
                 yield return null;
             }
         }
-        if (!inside)
+        if (!_inside)
         {
             _inside = true;
 
-            while (_alarmSound.volume > 0)
+            while (_inside)
             {
                 _alarmSound.volume -= _targetVolume;
                 yield return null;
